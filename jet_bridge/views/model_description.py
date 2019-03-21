@@ -63,7 +63,7 @@ class ModelDescriptionsHandler(APIView):
             name = mapper.selectable.name
 
             for relation in mapper.relationships:
-                if relation.direction != ONETOMANY:
+                if relation.direction != ONETOMANY or not hasattr(relation, 'table'):
                     continue
 
                 m2m_relationships = relation.mapper.relationships.values()
