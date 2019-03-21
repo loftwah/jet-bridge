@@ -5,3 +5,5 @@ requests
 Pillow
 dateparser
 prompt_toolkit
+psycopg2
+mysqlclient
