@@ -57,7 +57,7 @@ class ModelDescriptionsHandler(APIView):
             }
 
         def table_relations(mapper):
-            return list(map(map_relation, filter(lambda x: x.direction == ONETOMANY, mapper.relationships)))
+            return list(map(map_relation, filter(lambda x: x.direction == ONETOMANY and hasattr(x, 'table'), mapper.relationships)))
 
         def table_m2m_relations(mapper):
             result = []
