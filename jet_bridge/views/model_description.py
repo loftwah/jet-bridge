@@ -1,6 +1,5 @@
 from sqlalchemy import inspect
 from sqlalchemy.orm.base import ONETOMANY
-from sqlalchemy.util import ImmutableProperties
 
 from jet_bridge.db import Session, MappedBase
 from jet_bridge.models import data_types
