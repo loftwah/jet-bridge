@@ -7,3 +7,4 @@ dateparser
 prompt_toolkit
 psycopg2
 mysqlclient
+prompt_toolkit>=2.0.9
