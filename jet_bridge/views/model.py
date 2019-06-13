@@ -66,7 +66,7 @@ class ModelHandler(ModelAPIViewMixin):
         return self.session.query(Model)
 
     def filter_queryset(self, queryset):
-        queryset = super().filter_queryset(queryset)
+        queryset = super(ModelHandler, self).filter_queryset(queryset)
         if self.action == 'list':
             mapper = inspect(self.model)
             pk = mapper.primary_key[0].name
@@ -121,11 +121,11 @@ class ModelHandler(ModelAPIViewMixin):
 
         model_serializer = self.get_serializer()
 
-        x_serializers = list(filter(lambda x: x.field_name == x_column, model_serializer.fields))
-        x_serializer = x_serializers[0]
+        # x_serializers = list(filter(lambda x: x.field_name == x_column, model_serializer.fields))
+        # x_serializer = x_serializers[0]
 
-        y_serializers = list(filter(lambda x: x.field_name == y_column, model_serializer.fields))
-        y_serializer = y_serializers[0]
+        # y_serializers = list(filter(lambda x: x.field_name == y_column, model_serializer.fields))
+        # y_serializer = y_serializers[0]
 
         filter_instance = ModelGroupFilter()
         filter_instance.model = self.model

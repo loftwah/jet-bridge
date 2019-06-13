@@ -1,7 +1,7 @@
 from sqlalchemy import inspect
 from sqlalchemy.orm.base import ONETOMANY
 
-from jet_bridge.db import Session, MappedBase
+from jet_bridge.db import MappedBase
 from jet_bridge.models import data_types
 from jet_bridge.permissions import HasProjectPermissions
 from jet_bridge.responses.base import Response
@@ -13,7 +13,6 @@ from jet_bridge.views.base.api import APIView
 class ModelDescriptionsHandler(APIView):
     serializer_class = ModelDescriptionSerializer
     permission_classes = (HasProjectPermissions,)
-    session = Session()
 
     def get_queryset(self):
         non_editable = ['id']
@@ -21,7 +20,11 @@ class ModelDescriptionsHandler(APIView):
 
         def map_column(column):
             params = {}
-            data_type = map_data_type(column.type)
+
+            try:
+                data_type = map_data_type(column.type)
+            except:
+                data_type = 'NullType'
 
             if len(column.foreign_keys):
                 foreign_key = next(iter(column.foreign_keys))
@@ -35,6 +38,7 @@ class ModelDescriptionsHandler(APIView):
                 'db_column': column.name,
                 'field': data_type,
                 'filterable': True,
+                'null': column.nullable,
                 'editable': column.name not in non_editable,
                 'params': params
             }

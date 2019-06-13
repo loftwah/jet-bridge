@@ -4,7 +4,6 @@ import logging
 import requests
 
 from jet_bridge import settings
-from jet_bridge.db import Session
 from jet_bridge.models.token import Token
 
 
@@ -12,8 +11,7 @@ def api_method_url(method):
     return '{}/{}'.format(settings.API_BASE_URL, method)
 
 
-def register_token():
-    session = Session()
+def register_token(session):
     token = session.query(Token).first()
 
     if token:
@@ -44,8 +42,7 @@ def register_token():
     return token, True
 
 
-def is_token_activated():
-    session = Session()
+def is_token_activated(session):
     token = session.query(Token).first()
 
     if not token:
@@ -67,16 +64,34 @@ def is_token_activated():
     return bool(result.get('activated'))
 
 
-def reset_token():
-    session = Session()
+def reset_token(session):
     session.query(Token).delete()
     session.commit()
 
-    return register_token()
+    return register_token(session)
 
 
-def project_auth(token, permission=None):
-    session = Session()
+def set_token(session, token):
+    project_token = session.query(Token).first()
+    token_clean = str(token).replace('-', '')
+
+    if project_token:
+        if project_token.token == token_clean:
+            logging.info('This token is already set, ignoring')
+            return
+
+        project_token.token = token_clean
+        project_token.date_add = datetime.now()
+        session.commit()
+        logging.info('Token changed to {}'.format(project_token.token))
+    else:
+        project_token = Token(token=token_clean, date_add=datetime.now())
+        session.add(project_token)
+        session.commit()
+        logging.info('Token created {}'.format(project_token.token))
+
+
+def project_auth(session, token, permission=None):
     project_token = session.query(Token).first()
 
     if not project_token:
